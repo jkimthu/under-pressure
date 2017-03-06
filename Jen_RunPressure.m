@@ -31,9 +31,9 @@ session.startBackground();
 
 dT=datevec(now-Time0);
 dTm=dT(4)+dT(5)/60+dT(6)/(60*60);
+
 while(dTm<MxTime)
-    pause(60);  % shortening the pause to 20 during a 20 sec period run prolongs it!
-    % commenting out the pause kills the run even faster than pause(60)
+    pause(60);
     dT=datevec(now-Time0);
     dTm=dT(4)+dT(5)/60+dT(6)/(60*60);
 end
