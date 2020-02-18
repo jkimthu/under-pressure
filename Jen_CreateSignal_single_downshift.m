@@ -1,7 +1,7 @@
-function SgO=Jen_CreateSignal_single_upshift(Mn, DiffHigh, DiffLow, XTime, shiftHour, maxTime, Rate)
+function SgO=Jen_CreateSignal_single_downshift(Mn, DiffHigh, DiffLow, XTime, shiftHour, maxTime, Rate)
 
-% last update: jen, 2018 Aug 08
-% commit: to match single downshift, which was previously automated
+% last update: jen, 2018 Aug 02
+% commit: initiates shift down in nutrient at designated time
 
 % Mn = mean pressure into device
 % DiffHigh = pressure input such that higher fluid overtakes lower
@@ -13,7 +13,6 @@ function SgO=Jen_CreateSignal_single_upshift(Mn, DiffHigh, DiffLow, XTime, shift
 %                 after signal ends such that high continues to flow until
 %                 experiment is taken down/liquid runs out.
 % Rate = signal inputs per second
-
 
 
 % 1. convert time of shift to seconds
@@ -39,41 +38,37 @@ end
 
 
 % 4. adjust time in high and low based on transition timing, so that transition fits
-%phase2_Time = round((secondsAfterShift-(XTime/2))*Rate);
 phase2_time = round((secondsAfterShift-(XTime/2)));
 phase1_time = round((shiftSeconds-(XTime/2)));
-%phase1_time = round((shiftSeconds-(XTime/2))*Rate);
 
 
 % 5. build saturated sections of signal
-signalLow = [ones(phase1_time*Rate,1)*(Mn-DiffLow),ones(phase1_time*Rate,1)*(Mn+DiffLow)];
-signalHigh = [ones(phase2_time*Rate,1)*(Mn+DiffHigh),ones(phase2_time*Rate,1)*(Mn-DiffHigh)];
+signalLow = [ones(phase2_time*Rate,1)*(Mn-DiffLow),ones(phase2_time*Rate,1)*(Mn+DiffLow)];
+signalHigh = [ones(phase1_time*Rate,1)*(Mn+DiffHigh),ones(phase1_time*Rate,1)*(Mn-DiffHigh)];
 
 
 
 % 6. build transitions (two total: up and down)of signal
-transition_downshift=[(Mn+DiffHigh)-(DiffLow+DiffHigh)*transitionSignal,(Mn-DiffHigh)+(DiffHigh+DiffLow)*transitionSignal];
-transition_upshift=transition_downshift(end:-1:1,:);
+transition_downshift = [(Mn+DiffHigh)-(DiffLow+DiffHigh)*transitionSignal,(Mn-DiffHigh)+(DiffHigh+DiffLow)*transitionSignal];
+transition_upshift = transition_downshift(end:-1:1,:);
 
 
 % 7. concatenate and output signal
 fullSignal = [];
-fullSignal = [signalLow;transition_upshift;signalHigh];
+fullSignal = [signalHigh;transition_downshift;signalLow];
 
 
 % 8. display full signal
 disp(sprintf('\nFinal Parameters:'))
-disp(sprintf('Phase1 (low): %0.03f s',length(signalLow)/Rate))
+disp(sprintf('Phase1 (high): %0.03f s',length(signalHigh)/Rate))
 disp(sprintf('Transition: %0.03f s',XTime))
-disp(sprintf('Phase2 (low): %0.03f s',length(signalHigh)/Rate))
+disp(sprintf('Phase2 (low): %0.03f s',length(signalLow)/Rate))
 disp(sprintf('Total Time: %0.03f s',size(fullSignal,1)/Rate))
 disp(sprintf('Signal length: %0.03f s',size(fullSignal,1)))
 
-
-
 figure(1)
 clf
-plot([1:length(fullSignal)]/Rate/3600,fullSignal) % in hours
+plot([1:length(fullSignal)]/(Rate*3600),fullSignal) % in hours
 xlabel('time (hr)')
 ylabel('calibration value')
 title('full signal')
