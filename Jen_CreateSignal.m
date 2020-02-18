@@ -15,29 +15,47 @@ else
     SgTrn=(1-cos(t'))/2;
 end
 
+% length of buffer and signal sections
+% TB is twice as short, as it is repeated twice (sandwiching TS)
 TB=round((Period-2*XTime)/4*Rate);
 TS=round((Period-2*XTime)/2*Rate);
 
+% build sections of pressure signal
 SgB=[ones(TB,1)*(Mn+DiffB),ones(TB,1)*(Mn-DiffB)];
 SgS=[ones(TS,1)*(Mn-DiffS),ones(TS,1)*(Mn+DiffS)];
 
+% build transitions (two total: up and down)
 SgT=[(Mn+DiffB)-(DiffS+DiffB)*SgTrn,(Mn-DiffB)+(DiffB+DiffS)*SgTrn];
 SgT2=SgT(end:-1:1,:);
 
-Sg=[SgB;SgT;SgS;SgT2;SgB];
-% Sg=Sg(:,2:-1:1);
+% putting it all together for one full period
+onePeriod=[SgB;SgT;SgS;SgT2;SgB];
 
+% if period is shorter than 15 minutes (900 sec),
+% concatentate to generate longer signal
+Sg = [];
+if Period < 900
+    numPeriodsPerSignal = ceil(900/Period);
+    for i = 1:numPeriodsPerSignal
+        Sg = [Sg;onePeriod];
+    end
+else
+    Sg = onePeriod;
+end
+
+
+% display signal period output
 disp(sprintf('\nFinal Parameters:'))
 disp(sprintf('Buffer: %0.03f s',length(SgB)/Rate))
 disp(sprintf('Transit: %0.03f s',XTime))
 disp(sprintf('Nutrient: %0.03f s',length(SgS)/Rate))
 disp(sprintf('Transit: %0.03f s',XTime))
 disp(sprintf('Buffer: %0.03f s',length(SgB)/Rate))
-disp(sprintf('Total Time: %0.03f s',size(Sg,1)/Rate))
+disp(sprintf('Total Time: %0.03f s',size(onePeriod,1)/Rate))
 
 SgO{1}=Rate;
 SgO{2}=Sg;
 
 figure(1)
 clf
-plot([1:length(Sg)]/Rate,Sg)
+plot([1:length(onePeriod)]/Rate,onePeriod)

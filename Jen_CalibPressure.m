@@ -4,6 +4,7 @@ if nargin==2
 Dff=Mn;
 Mn=session;
 
+% initialize with these three lines
 session = daq.createSession('ni');
 session.addAnalogOutputChannel('cDAQ1Mod1',0,'Voltage');
 session.addAnalogOutputChannel('cDAQ1Mod1',1,'Voltage');
