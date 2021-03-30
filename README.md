@@ -27,6 +27,7 @@ Determines which pressures would enable complete switching between high and low 
 3. Dff = difference in pressure (+ shifts balance in one direction, - shifts balance towards the other)
 
 ### Two. createSignal.m
+The signal generated is a variable that is called when running the next script.
 Using the pressure differences calibrated from the above script, the user can define:
 1. Mn = mean flow rate (use value determined above)
 2. DiffB = difference for high input to overtake low
@@ -34,7 +35,7 @@ Using the pressure differences calibrated from the above script, the user can de
 4. XTime = transition time (leave empty [])
 5. Period = desired fluctuation T in seconds
 6. Rate = signal bits per second
-The signal generated is a variable that is called when running the next script.
+
 
 ### Three. runPressure.m
 Takes the created signal and initiates it upon sensing that image acquisition has begun, thus timing fluctuating signal with experimental t = 0.
