@@ -1,7 +1,7 @@
 function Jen_RunPressure(Signal,FlName,MxTime)
 
-% last edit: 2018 Jan 29
-% commit: expand comments
+% last edit: 2021 March 29
+% commit: rename function to be less narcissistic
 
 % Jen_RunPressure(Signal,FlName,MxTime)
 % Signal = {rate,data}

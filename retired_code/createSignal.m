@@ -1,8 +1,4 @@
-function SgO = createSignal(Mn, DiffB, DiffS, XTime, Period, Rate)
-
-% last edit: 2021 March 29
-% commit: rename function to be less narcissistic
-
+function SgO=createSignal(Mn, DiffB, DiffS, XTime, Period, Rate)
 % SignalOut=Jen_CreateSignal(Mn, DiffB, DiffS, XTime, Period, Rate)
 % Period in Seconds, Rate in samples/seconds
 % leave XTime empty ('[]') to use approximate max smooth slope
@@ -48,7 +44,7 @@ else
 end
 
 
-% display signal period output
+% display signal output
 disp(sprintf('\nFinal Parameters:'))
 disp(sprintf('Buffer: %0.03f s',length(SgB)/Rate))
 disp(sprintf('Transit: %0.03f s',XTime))
